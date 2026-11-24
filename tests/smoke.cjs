@@ -15,6 +15,7 @@ async function main() {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     await page.goto(pathToFileURL(path.resolve(__dirname, '../index.html')).href);
+    await page.selectOption('#language-switch', 'zh');
     async function calc() { await page.click('#calculate'); }
     async function cells() {
       return page.locator('#sample-results tr').evaluateAll(rows => rows.map(r => [...r.querySelectorAll('td')].map(td => td.innerText.trim())));

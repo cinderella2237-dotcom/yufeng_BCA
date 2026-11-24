@@ -9,6 +9,10 @@ button{border:0}
 [hidden]{display:none!important}
 .shell{max-width:1400px;margin:0 auto;padding:26px 32px 30px}
 .hero{min-height:207px;border-radius:19px;padding:32px 38px;display:flex;justify-content:space-between;align-items:center;gap:30px;overflow:hidden;background:linear-gradient(118deg,#064b4d 0%,#08695f 70%,#16877b 100%);color:white;box-shadow:0 12px 28px rgba(7,74,69,.15)}
+.hero{position:relative}
+.language-control{position:absolute;top:18px;right:24px;z-index:1}
+.language-control select{width:135px;min-height:36px;padding:6px 10px;background:#fff;color:#075a55;font-size:14px;font-weight:700}
+.hero-aside{margin-top:32px}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid #ffffff45;border-radius:30px;color:#d4f4e7;font-size:11px;letter-spacing:.08em}
 .dot{width:7px;height:7px;background:#95e6c0;border-radius:50%}
 h1,h2,h3,p{margin:0}
@@ -147,4 +151,5 @@ textarea,.field input,.field select{font-size:14px}
 a{color:#086e61}
 @media(max-width:900px){.sample-settings{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.sample-settings{grid-template-columns:1fr}.profile-controls .field{width:100%}.concentrations{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){.hero{padding-top:68px}.language-control{top:15px;right:20px}}
 

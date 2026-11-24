@@ -1,6 +1,6 @@
 <!doctype html>
 <!-- Copyright (C) 2026 Cinderella_yufeng; SPDX-License-Identifier: AGPL-3.0-only -->
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
@@ -12,6 +12,10 @@
 <body>
 <div class="shell">
   <header class="hero">
+    <div class="language-control" data-i18n-ignore>
+      <label class="sr-only" for="language-switch">Language / 语言</label>
+      <select id="language-switch" aria-label="Language / 语言"><option value="en">English</option><option value="zh">中文</option></select>
+    </div>
     <div class="hero-copy">
       <div class="eyebrow">多试剂盒 · 浏览器本地计算</div>
       <h1>BCA 蛋白<span>定量平台</span></h1>
@@ -24,7 +28,7 @@
   <main>
     <section class="card" aria-labelledby="kit-title">
       <div class="section-head">
-        <div><div class="kicker">ASSAY SETUP</div><h2 id="kit-title">选择试剂盒和实验方案</h2></div>
+        <div><div class="kicker">实验设置</div><h2 id="kit-title">选择试剂盒和实验方案</h2></div>
         <p>预设为说明书示例，计算前请核对本次实际条件</p>
       </div>
       <div class="settings-grid">
@@ -43,7 +47,7 @@
         <button type="button" id="save-profile" class="secondary small">保存到本机</button>
         <button type="button" id="delete-profile" class="text-button" hidden>删除本机方案</button>
       </div>
-      <p class="fine">仅保存方案设置到此浏览器，不保存吸光度或样品名称。</p>
+      <p class="fine">仅保存方案设置和语言偏好到此浏览器，不保存吸光度或样品名称。</p>
       <label class="field concentration-field">本次实际标准梯度（按粘贴顺序；用逗号、空格或换行分隔）
         <textarea id="conc-list" rows="2" spellcheck="false" autocomplete="off" aria-describedby="concentration-help"></textarea>
       </label>
@@ -73,7 +77,7 @@
 
     <div class="entry-grid">
       <section class="card entry-card" aria-labelledby="standard-title">
-        <div class="section-head compact"><div><div class="kicker">STANDARD DATA</div><h2 id="standard-title">粘贴标准品吸光度</h2></div></div>
+        <div class="section-head compact"><div><div class="kicker">标准品数据</div><h2 id="standard-title">粘贴标准品吸光度</h2></div></div>
         <label class="field">标准品表格方向
           <select id="std-layout"><option value="columns">每列一个浓度，上下为复孔</option><option value="rows">每行一个浓度，左右为复孔</option></select>
         </label>
@@ -83,7 +87,7 @@
         <div class="entry-footer"><span>顺序与上方浓度一致；数据需要本次实测。</span><label class="file-button">导入 CSV / TSV<input id="standard-file" type="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></label></div>
       </section>
       <section class="card entry-card" aria-labelledby="samples-title">
-        <div class="section-head compact"><div><div class="kicker">SAMPLE DATA</div><h2 id="samples-title">粘贴样品吸光度</h2></div></div>
+        <div class="section-head compact"><div><div class="kicker">样品数据</div><h2 id="samples-title">粘贴样品吸光度</h2></div></div>
         <div class="settings-grid sample-settings">
           <label class="field">样品表格方向<select id="layout"><option value="columns">上下复孔，每组连续若干行</option><option value="rows">左右复孔，每行一个样品</option></select></label>
           <label class="field">每个样品的复孔数<input id="sample-reps" type="number" min="1" max="8" step="1" value="2"></label>
@@ -106,7 +110,7 @@
     </div>
     <div id="error" class="notice error" role="alert" hidden></div>
     <section id="results" class="results" aria-live="polite" hidden>
-      <div class="result-heading"><div><div class="kicker">RESULTS</div><h2>计算结果</h2><p id="input-summary"></p></div><button type="button" id="export" class="secondary">下载结果 CSV</button></div>
+      <div class="result-heading"><div><div class="kicker">结果</div><h2>计算结果</h2><p id="input-summary"></p></div><button type="button" id="export" class="secondary">下载结果 CSV</button></div>
       <div id="quality" class="quality"></div>
       <div id="warnings" class="warning-list"></div>
       <div class="result-grid">
@@ -127,7 +131,7 @@
       <details class="card details-card" open><summary>查看标准点与复孔明细</summary><div class="table-scroll"><table><thead><tr><th>标准浓度<br><small>mg/mL</small></th><th>复孔读数</th><th>复孔数</th><th>平均吸光度</th><th>处理后</th><th>复孔 CV</th></tr></thead><tbody id="standard-results"></tbody></table></div></details>
     </section>
     <section class="card guide">
-      <div><div class="kicker">ABOUT</div><h2>使用与数据说明</h2></div>
+      <div><div class="kicker">关于</div><h2>使用与数据说明</h2></div>
       <ol>
         <li>预设仅作为对应说明书的示例；应核对产品货号、说明书版本、实际浓度、样品体积和实验条件。</li>
         <li>上方梯度显示的是每个标准点的浓度，不是标准品储备液浓度。质量单位 µg/孔会按标准品加工作液前的总体积换算。</li>
@@ -141,6 +145,7 @@
   </main>
   <footer>© 2026 Cinderella_yufeng · <a href="LICENSE">AGPL-3.0 开源许可</a> · 与任何试剂盒厂商无隶属关系</footer>
 </div>
+<script src="i18n.js"></script>
 <script src="kits.js"></script>
 <script src="app.js"></script>
 </body>

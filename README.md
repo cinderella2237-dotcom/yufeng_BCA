@@ -1,92 +1,82 @@
-# BCA 蛋白定量计算平台
+# BCA Protein Quantification Platform
 
-项目署名：**Cinderella_yufeng**。Copyright © 2026 Cinderella_yufeng。
+An open-source, browser-based calculator for BCA protein assays. Choose a kit example or define your own standard concentrations, paste standard and sample absorbances, and review the resulting standard curve and protein concentrations. The interface defaults to English and can be switched to Chinese.
 
-一个在浏览器中运行的 BCA 蛋白定量工具。选择试剂盒示例或输入自己的标准梯度，将酶标仪读数粘贴进网页，检查拟合曲线并下载结果。不需要账号、服务器或安装程序即可使用。本项目在设计和开发过程中使用了 AI 辅助工具。
+Project attribution: **Cinderella_yufeng**. Copyright © 2026 Cinderella_yufeng. AI-assisted tools were used during the design and development of this project.
 
-欢迎通过项目留言提出修改意见或新增试剂盒的建议；请不要在公开留言中粘贴未公开的实验数据或个人信息。
+The calculator runs locally in your browser and does not require an account or a server for calculations. It was developed for research and teaching and has not been validated for clinical diagnosis. Presets are editable examples, not a substitute for checking the actual kit instructions and laboratory protocol.
 
-**说明书预设是可以修改的起点，不等于对某批次试剂盒或某一实验的验证。** 必须按实际操作核对梯度、单位、体积、空白处理和拟合方法。本工具面向科研与教学开发，未经临床诊断用途验证。
+## Quick start
 
-## 使用
+1. Open `index.html` in a current desktop browser. Select a kit example, or choose **Other kit / fully custom**. The default laboratory example uses 0, 0.125, 0.25, 0.5, 1, and 2 mg/mL standards with 12.5 µL of sample or standard plus 100 µL of working reagent per well.
+2. Check the standard concentrations, units, replicate counts, volumes, fitting method, and quality-control settings against your experiment. You can paste concentrations as a row or column.
+3. Paste the standard and sample absorbance values into their respective boxes. By default, each column is one standard or sample, and replicates are arranged vertically. Consecutive row groups are supported. Review the pairing preview before calculating.
+4. Select **Calculate concentrations**, review the curve and warnings, and download the results as CSV. A data backup can also be downloaded and later restored through **Import data backup**.
 
-1. 打开 `index.html`。选择试剂盒，或者选择“其他试剂盒 / 完全自定义”。本实验室六点示例保留了 0、0.125、0.25、0.5、1、2 mg/mL，以及每孔 12.5 µL 标准品或样品 + 100 µL 工作液。
-2. 检查标准梯度、标准浓度单位、复孔数量。梯度可直接粘贴一行或一列；它表示每个实际标准点的浓度，不是储备液浓度。按实验情况设置体积、拟合方式和质量控制。
-3. 分别从 Excel 或酶标仪表格复制标准品和样品读数，粘贴到对应输入框。默认每列为一个标准点或样品，上下为复孔；样品可按两行一组连续粘贴，网页会预览配对关系。也可切换为每行一个样品。可导入 CSV、TSV；Excel 文件需要先复制单元格或另存为 CSV。
-4. 点击“计算蛋白浓度”，检查复孔、空白、曲线和结果状态。可下载结果 CSV，或单独下载含原始数据和设置的 JSON 备份。备份使用网页中的“导入数据备份”，不要直接在浏览器里打开查看。
-
-例如，以下样品表格有 3 个样品，每列上下是两个复孔：
+For example, the following is a sample table with three samples, each measured in two vertically adjacent wells:
 
 ```text
 0.539    0.232    0.390
 0.541    0.235    0.392
 ```
 
-如果各样品预稀释倍数不同，选择“左右复孔，每行一个样品”，并粘贴带表头的表格，例如：
+For different sample dilution factors, choose the one-sample-per-row layout and include a header:
 
 ```text
-样品名称,吸光度1,吸光度2,稀释倍数
-样品A,0.539,0.541,2
-样品B,0.232,0.235,4
+Sample Name,Absorbance 1,Absorbance 2,Dilution
+Sample A,0.539,0.541,2
+Sample B,0.232,0.235,4
 ```
 
-“保存到本机”仅保存当前方案设置到当前浏览器，不保存样品名称或吸光度。更换浏览器或清除网站数据后，保存的方案可能不可用。计算输入不会自动保留；如需恢复某次计算，请主动下载并妥善保管数据备份。
+CSV and TSV files can be imported directly. For Excel workbooks, copy the relevant cells or export them as CSV. Both English and Chinese column headers are recognized, independently of the interface language. Changing languages does not clear the current inputs or results.
 
-## 计算与结果解读
+**Save in this browser** stores only protocol settings, not sample names or absorbances. Your language preference is also stored locally. If you want to restore a calculation after leaving the page, explicitly download a data backup and keep it somewhere appropriate.
 
-- 默认分别对标准品和样品的复孔取平均，再用 0 浓度标准品的复孔均值扣空白。仪器已扣空白时应切换到“已扣空白”，以免重复扣除。
-- 支持线性回归、二次回归和相邻标准点线性插值。默认的 **R² 严格大于 0.99** 是实验室可修改规则，不是各厂商通用合格线。逐点插值没有整体回归 R²；回归剩余自由度不足时，也不能用 R² 评估质量。默认阻断规则会暂停报告浓度，必要时可根据实验室方法改为显示结果并提醒。
-- 测定结果超出最高实测标准点时显示计算值，并标为“外推估算”；R² 高不能证明外推准确，建议稀释并重新测定或使用已验证方法确认。最高标准点不限制原样浓度：预稀释样品的原样浓度可能高于最高标准点，而测定液仍处在标准点覆盖范围内。
-- 原样浓度 = 加工作液前的样品浓度 ×（样品补液后的总体积 ÷ 实际样品体积）× 孔外预稀释倍数。BCA 工作液不计入补液倍数。程序要求标准品和样品加工作液前的总体积相同，以便比较反应条件。
-- 显示以扣空白后均值为分母计算的复孔 CV；均值不大于 0 或只有单孔时不显示。没有将某个 CV 数值设为通用合格线，需结合实验室方法判断。
-- 试剂盒对裂解液成分、还原剂、螯合剂等的兼容性并不相同；标准品与样品的基质、温度、反应时间和读数波长也应结合对应说明书核对。
+## Calculations and interpretation
 
-## 已整理的说明书示例
+- By default, replicate readings are averaged and both standards and samples are corrected using the mean of the zero-concentration blank. If the instrument already subtracted the blank, select the already-corrected option.
+- Linear regression, quadratic regression, and point-to-point linear interpolation are available. The default rule is **R² strictly greater than 0.99**; this is an adjustable laboratory rule, not a universal manufacturer requirement. Point-to-point interpolation has no overall R². R² is also not used for QC when a regression has no residual degrees of freedom.
+- The highest standard point is not a cap on the original sample concentration. A result outside the measured standard points is reported numerically and marked as an extrapolated estimate. A high R² does not validate extrapolation; dilution and retesting or other method validation is recommended.
+- Original concentration = pre-reagent sample concentration × (total volume after top-up ÷ sample volume added) × pre-dilution factor. The BCA working reagent is not included in the sample top-up factor. Standards and samples must have matching total volumes before reagent addition.
+- Replicate CV is calculated from replicate standard deviation divided by the processed mean absorbance. It is not shown for a single well or a nonpositive mean. No universal pass threshold is imposed.
+- Check sample matrix compatibility, reducing agents, chelators, incubation conditions, wavelength, and the specific manufacturer's instructions. Kit performance claims are not the same as the standard points actually measured in a given experiment.
 
-下表为内置示例梯度，均包含空白。实际使用时应以当前批次说明书及配制的标准品为准。厂家标示的检测或线性范围不等于本次测定标准点的覆盖范围。
+## Included protocol examples
 
-| 方案 | 示例标准梯度 | 来源与说明 |
+All examples include a blank. Check the actual kit number, instructions, and standards prepared for the experiment.
+
+| Example | Standard points | Source |
 | --- | --- | --- |
-| Thermo Pierce BCA 23225/23227 | 0、0.025、0.125、0.25、0.5、0.75、1、1.5、2 mg/mL | [MAN0011430 Rev. D](https://tools.thermofisher.com/content/sfs/manuals/MAN0011430_Pierce_BCA_Protein_Asy_UG.pdf)，标准微孔板方案；默认为二次回归，需按实际方法确认。 |
-| 碧云天 P0012 普通型 | 0、0.025、0.05、0.1、0.2、0.3、0.4、0.5 mg/mL | [P0012 说明书](https://www.beyotime.com/Manual/P0012%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92.pdf)，样品不足 20 µL 时补足。 |
-| 碧云天 P0010S 增强型 | 0、0.025、0.05、0.1、0.2、0.3、0.4、0.5 mg/mL | [P0010S 说明书](https://m.beyotime.com/Manual/P0010S%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92_%E5%A2%9E%E5%BC%BA%E5%9E%8B_.pdf)。 |
-| 索莱宝 PC0020 | 0、0.05、0.1、0.15、0.2、0.3、0.4、0.5 mg/mL | [PC0020 V02 说明书](https://www.solarbio.com/images/202507/1752228854113948235.pdf)。 |
-| 诺唯赞 E112 V22.1 | 0、0.05、0.1、0.2、0.4、0.6、0.8、1 mg/mL | [厂家 V22.1 说明书（经销商镜像）](https://www.biorbyt.com/images/pub/media/additional_documents/New_site/Manual/vazyme/E112-01.pdf?timestamp=20260128)，由每孔 0–20 µg、总体积 20 µL 换算。 |
-| Thermo Micro BCA 23235 | 0、2.5、5、10、20、40 µg/mL | 根据 [MAN0011237 说明书](https://documents.thermofisher.com/TFS-Assets%2FLSG%2Fmanuals%2FMAN0011237_Micro_BCA_Protein_Asy_UG.pdf) 标准液系列与微孔板工作范围整理的示例子集，需核对实际梯度。 |
+| Thermo Pierce BCA 23225/23227 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [MAN0011430 Rev. D](https://tools.thermofisher.com/content/sfs/manuals/MAN0011430_Pierce_BCA_Protein_Asy_UG.pdf), standard microplate protocol |
+| Beyotime P0012 | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [P0012 instructions](https://www.beyotime.com/Manual/P0012%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92.pdf) |
+| Beyotime P0010S | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [P0010S instructions](https://m.beyotime.com/Manual/P0010S%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92_%E5%A2%9E%E5%BC%BA%E5%9E%8B_.pdf) |
+| Solarbio PC0020 | 0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5 mg/mL | [PC0020 V02 instructions](https://www.solarbio.com/images/202507/1752228854113948235.pdf) |
+| Vazyme E112 V22.1 | 0, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1 mg/mL | [Manufacturer's manual, distributor mirror](https://www.biorbyt.com/images/pub/media/additional_documents/New_site/Manual/vazyme/E112-01.pdf?timestamp=20260128); converted from mass per well using 20 µL |
+| Thermo Micro BCA 23235 | 0, 2.5, 5, 10, 20, 40 µg/mL | Example subset selected from the [MAN0011237 manual](https://documents.thermofisher.com/TFS-Assets%2FLSG%2Fmanuals%2FMAN0011237_Micro_BCA_Protein_Asy_UG.pdf); verify the actual series used |
 
-## 在 GitHub Pages 发布
+## GitHub Pages
 
-本项目是静态网页，可以放在 GitHub 仓库根目录，无需服务器和构建步骤。
+The project is a static website and does not require a build step.
 
-1. 在 GitHub 新建仓库，将 `index.html`、`styles.css`、`kits.js`、`app.js`、`LICENSE`、`CITATION.cff` 和本说明文件上传到仓库的最外层。同一文件夹内的相对位置不要改变。需要保留测试时，可一并上传 `tests` 和 `package.json`；不要上传实验数据。
-2. 进入仓库的 **Settings → Pages**，在 **Build and deployment** 中选择 **Deploy from a branch**，选择包含文件的分支（通常是 `main`）及 `/(root)`，保存。
-3. 等待 GitHub 构建完成，在 Pages 设置页查看实际网址。普通项目通常为 `https://用户名.github.io/仓库名/`；账号主页仓库的网址有所不同。
+1. Extract the release archive. Upload the **contents** of the extracted folder to the repository root, rather than uploading the outer folder. The root should directly contain `index.html`, `styles.css`, `i18n.js`, `kits.js`, `app.js`, `README.md`, `LICENSE`, and `CITATION.cff`; the `tests` folder and project configuration files can be included alongside them. If the repository already contains an AGPL-3.0 license, review the existing file before replacing it.
+2. In **Settings → Pages → Build and deployment**, choose **Deploy from a branch**, select the branch containing the files (usually `main`) and `/(root)`, then save.
+3. Wait for the deployment and use the URL shown in Pages settings. See the [GitHub Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-详细步骤以 [GitHub Pages 官方说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)为准。
+## Privacy and publication
 
-## 隐私与发布检查
+The page does not transmit sample names or absorbances to an application server and does not include analytics. Saved protocols and the language choice are stored in the current browser; raw data and results are downloaded only when requested. Hosting providers may record connection information, and opening a source manual visits an external website.
 
-计算在访问者浏览器内进行，网页不会为计算而上传吸光度或样品名称，也不接入统计脚本。网页配置了内容安全策略，限制脚本和网络连接；它并不能保证消除所有安全风险。用户自行下载的数据文件可能含有实验数据，请勿将这些文件提交到公开仓库。
+Do not commit raw experimental data, downloaded backups, credentials, or private information to a public repository. The `.gitignore` excludes common data and credential files but does not prevent manual uploads or remove already tracked files. The six-point laboratory example and its 12.5 µL + 100 µL protocol are part of the public source; remove or change them before publication if they are confidential.
 
-`.gitignore` 尽量排除常见数据文件和凭据，但它只对尚未跟踪的文件生效，也不能阻止通过 GitHub 网页手动上传；上传前请逐项检查。不要上传 `work/`、实验原始数据、个人信息或凭据。本示例公开了六点梯度及 12.5 µL + 100 µL 的实验条件；如果这些属于实验室未公开的方案，请在发布前修改或删除。
+## License and citation
 
-GitHub 等网站托管方可能记录访问者的连接信息，点击说明书链接也会访问外部网站。若使用 Git 提交，还应检查提交者姓名和邮箱，按需要使用 GitHub 的 `noreply` 邮箱。
+Project software is licensed under **GNU Affero General Public License v3.0 only**; see [LICENSE](LICENSE). Use, modification, distribution, and commercial use are allowed under its terms. Distribution and qualifying network use of modified versions carry applicable source and notice obligations. An alternative authorization may be discussed separately when necessary and when the relevant rights are available; the existing AGPL permissions remain unaffected.
 
-## 版权与许可证
+Kit trademarks, third-party manuals, and users' experimental data are not automatically licensed under the project's software license. Please cite the project using [CITATION.cff](CITATION.cff). A verified repository URL or DOI may be added to the citation file after publication; citation metadata is not proof of copyright registration.
 
-本项目软件代码按 [GNU Affero General Public License version 3.0 only（AGPL-3.0-only）](LICENSE) 授权。用户可以按照该许可证使用、修改和分发软件，**包括商业使用，无需另行付费或取得商业许可**。分发或通过网络提供修改版本时，应遵守许可证适用条款，包括保留相关声明、向相应接收者或网络用户提供对应源码；完整条件以 `LICENSE` 原文为准。
+## Development tests
 
-如某种使用方式不能满足 AGPL 的条件，可以联系权利人讨论另行授权；在 AGPL 下获得的权利不受这一说明影响。接受外部代码贡献时，另行授权的能力取决于对相关代码的权利或授权。
-
-试剂盒说明书和商标归各自权利人所有；本项目的许可不授予第三方说明书、商标或其他第三方素材的权利。用户自己的实验数据不因使用本工具而自动纳入本项目许可证。
-
-## 科研引用
-
-欢迎在论文或报告中引用本工具。项目根目录的 `CITATION.cff` 提供了名称、版本和笔名 `Cinderella_yufeng`，供 GitHub 和科研引用工具读取。获得实际仓库地址或 DOI 后可以补充到引用文件。引用信息有助于署名与学术传播，不构成著作权登记证明。
-
-## 验证
-
-仓库内的浏览器测试使用虚构数据，覆盖多梯度和复孔、单位与补液换算、空白扣除、质量控制、外推、备份以及手机布局。仅运行网页不需要安装依赖；开发者如需运行测试：
+The test suite uses fictional data and covers standard calculations, units, blank correction, quality control, extrapolation, backup compatibility, English/Chinese switching, and layout. Running the website itself does not require these dependencies.
 
 ```sh
 npm install
@@ -94,4 +84,4 @@ npx playwright install chromium
 npm test
 ```
 
-所列试剂盒名称和商标属于各自权利人；本项目与相关厂商无隶属关系。
+Suggestions for corrections or additional kits are welcome through project issues. Please do not post private data or credentials in public issues. The project is not affiliated with any kit manufacturer.
