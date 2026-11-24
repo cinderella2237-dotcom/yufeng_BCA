@@ -1,0 +1,147 @@
+<!doctype html>
+<!-- Copyright (C) 2026 Cinderella_yufeng; SPDX-License-Identifier: AGPL-3.0-only -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器中处理不同 BCA 试剂盒的标准曲线和蛋白浓度数据。">
+  <title>BCA 蛋白定量计算平台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">多试剂盒 · 浏览器本地计算</div>
+      <h1>BCA 蛋白<span>定量平台</span></h1>
+      <p>选择试剂盒，核对标准梯度，粘贴吸光度，即可计算样品浓度。</p>
+    </div>
+    <div class="hero-aside" aria-label="使用流程">
+      <div>选择方案与标准梯度</div><div>粘贴标准品和样品</div><div>检查曲线并导出结果</div>
+    </div>
+  </header>
+  <main>
+    <section class="card" aria-labelledby="kit-title">
+      <div class="section-head">
+        <div><div class="kicker">ASSAY SETUP</div><h2 id="kit-title">选择试剂盒和实验方案</h2></div>
+        <p>预设为说明书示例，计算前请核对本次实际条件</p>
+      </div>
+      <div class="settings-grid">
+        <label class="field">试剂盒 / 实验方案<select id="preset"></select></label>
+        <label class="field">标准浓度单位
+          <select id="unit"><option value="mg">mg/mL</option><option value="ug">µg/mL</option><option value="ug-well">µg / 孔</option></select>
+        </label>
+        <label class="field">标准品每个浓度的复孔数<input id="std-reps" type="number" min="1" max="8" step="1" value="2"></label>
+      </div>
+      <div class="info-line"><span class="info-icon">i</span><span id="preset-note"></span></div>
+      <p class="fine"><a id="preset-source" href="#" target="_blank" rel="noopener noreferrer" hidden>查看所选方案的来源说明书</a> <span id="preset-edited"></span></p>
+      <div class="profile-controls">
+        <label class="field">保存常用方案（可选）
+          <input id="profile-name" type="text" maxlength="80" placeholder="例如：本实验室 BCA">
+        </label>
+        <button type="button" id="save-profile" class="secondary small">保存到本机</button>
+        <button type="button" id="delete-profile" class="text-button" hidden>删除本机方案</button>
+      </div>
+      <p class="fine">仅保存方案设置到此浏览器，不保存吸光度或样品名称。</p>
+      <label class="field concentration-field">本次实际标准梯度（按粘贴顺序；用逗号、空格或换行分隔）
+        <textarea id="conc-list" rows="2" spellcheck="false" autocomplete="off" aria-describedby="concentration-help"></textarea>
+      </label>
+      <p id="concentration-help" class="fine">可直接增删浓度点；标准曲线使用本次实测读数。已扣空白数据可以不含 0 点。</p>
+      <div id="concentration-preview" class="concentrations" aria-label="当前标准浓度顺序"></div>
+      <details class="advanced">
+        <summary>体积、拟合与质量控制设置</summary>
+        <div class="settings-grid advanced-grid">
+          <label class="field">标准品加工作液前总体积（µL）<input id="std-total" type="number" min="0.000001" step="any" value="12.5"></label>
+          <label class="field">每孔样品实际加入体积（µL）<input id="sample-volume" type="number" min="0.000001" step="any" value="12.5"></label>
+          <label class="field">样品补液后、加工作液前总体积（µL）<input id="sample-total" type="number" min="0.000001" step="any" value="12.5"></label>
+          <label class="field">每孔 BCA 工作液体积（µL）<input id="reagent" type="number" min="0.000001" step="any" value="100"></label>
+          <label class="field">曲线拟合
+            <select id="method"><option value="linear">线性回归（含截距）</option><option value="quadratic">二次回归</option><option value="piecewise">相邻标准点线性插值</option></select>
+          </label>
+          <label class="field">输入吸光度的空白处理
+            <select id="blank-mode"><option value="raw">原始读数：扣零浓度标准均值</option><option value="corrected">仪器已扣空白：不再扣除</option></select>
+          </label>
+          <label class="field">R² 合格门槛（严格大于）<input id="r2-threshold" type="number" min="0" max="0.999999999" step="0.001" value="0.99"></label>
+          <label class="field">R² 未达标时
+            <select id="qc-policy"><option value="block">暂停报告浓度</option><option value="warn">显示结果并提醒</option></select>
+          </label>
+        </div>
+        <p class="fine">R² 0.99 是可修改的实验室规则，并非所有试剂盒统一要求；逐点插值没有整体回归 R²。等体积补液的换算不包括 BCA 工作液。</p>
+      </details>
+    </section>
+
+    <div class="entry-grid">
+      <section class="card entry-card" aria-labelledby="standard-title">
+        <div class="section-head compact"><div><div class="kicker">STANDARD DATA</div><h2 id="standard-title">粘贴标准品吸光度</h2></div></div>
+        <label class="field">标准品表格方向
+          <select id="std-layout"><option value="columns">每列一个浓度，上下为复孔</option><option value="rows">每行一个浓度，左右为复孔</option></select>
+        </label>
+        <div id="standard-format" class="format"></div>
+        <label class="sr-only" for="standards">标准品吸光度表格</label>
+        <textarea id="standards" class="paste-box" spellcheck="false" placeholder="从 Excel 复制标准品区域并粘贴"></textarea>
+        <div class="entry-footer"><span>顺序与上方浓度一致；数据需要本次实测。</span><label class="file-button">导入 CSV / TSV<input id="standard-file" type="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></label></div>
+      </section>
+      <section class="card entry-card" aria-labelledby="samples-title">
+        <div class="section-head compact"><div><div class="kicker">SAMPLE DATA</div><h2 id="samples-title">粘贴样品吸光度</h2></div></div>
+        <div class="settings-grid sample-settings">
+          <label class="field">样品表格方向<select id="layout"><option value="columns">上下复孔，每组连续若干行</option><option value="rows">左右复孔，每行一个样品</option></select></label>
+          <label class="field">每个样品的复孔数<input id="sample-reps" type="number" min="1" max="8" step="1" value="2"></label>
+          <label class="field">统一孔外预稀释倍数<input id="dilution" type="number" min="1" step="any" value="1"></label>
+        </div>
+        <label class="sr-only" for="samples">样品吸光度表格</label>
+        <textarea id="samples" class="paste-box" spellcheck="false" placeholder="从 Excel 复制样品区域并粘贴"></textarea>
+        <div class="entry-footer"><span>上下复孔按组从左到右编号；缺孔会提示。</span><label class="file-button">导入 CSV / TSV<input id="sample-file" type="file" accept=".csv,.tsv,.txt,text/csv,text/plain"></label></div>
+        <div id="pair-preview" class="pair-preview" role="status" hidden></div>
+        <p class="sample-note">各样品稀释倍数或复孔数不同时，可使用带表头的按行表格；按每行实际非空读数取平均：<br><code>样品名称,吸光度1,吸光度2,稀释倍数</code></p>
+      </section>
+    </div>
+    <div id="demo-alert" class="notice demo-notice" hidden><strong>演示数据为虚构值。</strong>正式计算前请清空并粘贴实际读数。</div>
+    <div id="import-notice" class="notice demo-notice" role="status" hidden></div>
+    <div class="actions">
+      <button type="button" id="calculate" class="primary">计算蛋白浓度</button>
+      <button type="button" id="demo" class="secondary">填入演示数据</button>
+      <button type="button" id="clear" class="text-button">清空读数</button>
+      <div class="actions-end"><button type="button" id="save-project" class="secondary small">下载数据备份</button><label class="secondary small file-button">导入数据备份<input id="project-file" type="file" accept=".json,application/json"></label></div>
+    </div>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <section id="results" class="results" aria-live="polite" hidden>
+      <div class="result-heading"><div><div class="kicker">RESULTS</div><h2>计算结果</h2><p id="input-summary"></p></div><button type="button" id="export" class="secondary">下载结果 CSV</button></div>
+      <div id="quality" class="quality"></div>
+      <div id="warnings" class="warning-list"></div>
+      <div class="result-grid">
+        <div class="card chart-card"><div class="chart-heading"><div><h3>标准曲线</h3><p>横轴：浓度（mg/mL） · 纵轴：处理后的吸光度</p></div><span class="pill" id="method-label"></span></div><div id="chart" class="chart" role="img" aria-label="标准曲线图"></div><div class="chart-key"><span><i class="key-dot"></i>标准品均值</span><span><i class="key-line"></i>拟合曲线</span></div></div>
+        <div class="card metrics-card">
+          <h3>曲线信息</h3>
+          <div class="metric"><span>空白处理</span><strong id="blank-value"></strong></div>
+          <div class="metric"><span>非零标准点覆盖范围</span><strong id="actual-range"></strong></div>
+          <div class="metric"><span>决定系数 R²</span><strong id="r2"></strong></div>
+          <div class="equation"><span>曲线表达式</span><strong id="equation"></strong><small>x：浓度（mg/mL）；y：处理后的吸光度</small></div>
+        </div>
+      </div>
+      <div class="card table-card">
+        <div class="table-heading"><div><h3>样品浓度</h3><p>原样浓度包含孔外预稀释和加工作液前补液的换算；外推结果会标记。表格可以左右滑动。</p></div></div>
+        <div class="table-scroll"><table><thead><tr><th>样品名称</th><th>复孔1</th><th>其他复孔</th><th>平均吸光度</th><th>处理后</th><th>复孔 CV</th><th>预稀释倍数</th><th>反应前浓度<br><small>mg/mL</small></th><th>原样浓度<br><small>mg/mL</small></th><th>原样浓度<br><small>µg/mL</small></th><th>状态</th></tr></thead><tbody id="sample-results"></tbody></table></div>
+        <p class="fine">反应前浓度是补液后、加入 BCA 工作液之前的浓度。原样浓度 = 反应前浓度 × 补液总体积 / 实际样品体积 × 孔外预稀释倍数。CV 使用处理后的平均吸光度，均值不大于 0 时不显示。</p>
+      </div>
+      <details class="card details-card" open><summary>查看标准点与复孔明细</summary><div class="table-scroll"><table><thead><tr><th>标准浓度<br><small>mg/mL</small></th><th>复孔读数</th><th>复孔数</th><th>平均吸光度</th><th>处理后</th><th>复孔 CV</th></tr></thead><tbody id="standard-results"></tbody></table></div></details>
+    </section>
+    <section class="card guide">
+      <div><div class="kicker">ABOUT</div><h2>使用与数据说明</h2></div>
+      <ol>
+        <li>预设仅作为对应说明书的示例；应核对产品货号、说明书版本、实际浓度、样品体积和实验条件。</li>
+        <li>上方梯度显示的是每个标准点的浓度，不是标准品储备液浓度。质量单位 µg/孔会按标准品加工作液前的总体积换算。</li>
+        <li>默认按原始读数扣除零浓度空白；仪器已经扣空白时应选择“已扣空白”，避免重复处理。</li>
+        <li>最高标准点不是原样浓度上限。超出实测标准点的结果可按回归方程外推，但准确性需要通过稀释重测或方法验证确认。</li>
+        <li>逐点插值没有整体 R²。若选择它并启用 R² 阻断规则，程序不会报告浓度；需根据实验室方法选择质量控制策略。</li>
+      </ol>
+      <p>实验数据仅在浏览器中计算，不随本页面的计算过程上传。数据备份和结果文件由用户主动下载保存。试剂盒说明书及商标属于各自权利人。</p>
+      <p class="privacy">本工具面向科研和教学开发，未经临床诊断用途验证。各厂商预设与实验室规则均可调整，应以实际说明书及方法验证为准。</p>
+    </section>
+  </main>
+  <footer>© 2026 Cinderella_yufeng · <a href="LICENSE">AGPL-3.0 开源许可</a> · 与任何试剂盒厂商无隶属关系</footer>
+</div>
+<script src="kits.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
