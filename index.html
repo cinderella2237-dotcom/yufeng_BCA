@@ -26,6 +26,21 @@
     </div>
   </header>
   <main>
+    <details class="card quick-start">
+      <summary>快速上手：从粘贴数据到获取结果</summary>
+      <ol>
+        <li>选择试剂盒或自定义，核对标准浓度顺序、单位和复孔数。</li>
+        <li>按每列一个浓度、上下为复孔粘贴标准品吸光度；样品同样按上下复孔粘贴。</li>
+        <li>核对样品复孔配对和稀释倍数，点击“计算蛋白浓度”。</li>
+        <li>检查 R²、曲线和范围提示；需要时下载结果 CSV 或包含实验数据的备份。</li>
+        <li>长期复用设置：输入方案名称后保存到本机，也可以导出方案文件供其他浏览器导入。</li>
+      </ol>
+      <p>上下复孔示例：每列为一个标准浓度，按上方浓度顺序粘贴；下面的数字是虚构演示值。</p>
+      <pre class="guide-example">0.10  0.20  0.30  0.50  0.90  1.70
+0.10  0.20  0.30  0.50  0.90  1.70</pre>
+      <p>样品同样按每列一个样品、上下为复孔排列。不同样品稀释倍数不同，改用左右复孔表格并填写稀释倍数列。</p>
+      <p>原始读数默认扣空白；仪器已扣空白时避免重复扣除。X-BCA500 有单独的体积与空白规则，请阅读所选方案提示。</p>
+    </details>
     <section class="card" aria-labelledby="kit-title">
       <div class="section-head">
         <div><div class="kicker">实验设置</div><h2 id="kit-title">选择试剂盒和实验方案</h2></div>
@@ -46,8 +61,10 @@
         </label>
         <button type="button" id="save-profile" class="secondary small">保存到本机</button>
         <button type="button" id="delete-profile" class="text-button" hidden>删除本机方案</button>
+        <button type="button" id="export-profile" class="secondary small">导出当前方案</button>
+        <label class="secondary small file-button">导入方案<input id="profile-file" type="file" accept=".json,application/json"></label>
       </div>
-      <p class="fine">仅保存方案设置和语言偏好到此浏览器，不保存吸光度或样品名称。</p>
+      <p class="fine">本机方案仅保存在当前浏览器；清理浏览器数据可能丢失。方案文件不含吸光度或样品名称，数据备份则包含实验数据。</p>
       <label class="field concentration-field">本次实际标准梯度（按粘贴顺序；用逗号、空格或换行分隔）
         <textarea id="conc-list" rows="2" spellcheck="false" autocomplete="off" aria-describedby="concentration-help"></textarea>
       </label>
@@ -56,21 +73,23 @@
       <details class="advanced">
         <summary>体积、拟合与质量控制设置</summary>
         <div class="settings-grid advanced-grid">
-          <label class="field">标准品加工作液前总体积（µL）<input id="std-total" type="number" min="0.000001" step="any" value="12.5"></label>
+          <label class="field"><span id="std-total-label">标准品加工作液前总体积（µL）</span><input id="std-total" type="number" min="0.000001" step="any" value="12.5"></label>
           <label class="field">每孔样品实际加入体积（µL）<input id="sample-volume" type="number" min="0.000001" step="any" value="12.5"></label>
           <label class="field">样品补液后、加工作液前总体积（µL）<input id="sample-total" type="number" min="0.000001" step="any" value="12.5"></label>
           <label class="field">每孔 BCA 工作液体积（µL）<input id="reagent" type="number" min="0.000001" step="any" value="100"></label>
+          <label class="field">实验体积模式<select id="assay-mode"><option value="matched">常规：标准品与样品补足至相同体积</option><option value="x-bca-10">X-BCA500：以 10 µL 样品为参考</option></select></label>
           <label class="field">曲线拟合
             <select id="method"><option value="linear">线性回归（含截距）</option><option value="quadratic">二次回归</option><option value="piecewise">相邻标准点线性插值</option></select>
           </label>
           <label class="field">输入吸光度的空白处理
-            <select id="blank-mode"><option value="raw">原始读数：扣零浓度标准均值</option><option value="corrected">仪器已扣空白：不再扣除</option></select>
+            <select id="blank-mode"><option value="raw">原始读数：扣零浓度标准均值</option><option value="corrected">仪器已扣空白：不再扣除</option><option value="none">原始读数：按方法要求不扣空白</option></select>
           </label>
           <label class="field">R² 合格门槛（严格大于）<input id="r2-threshold" type="number" min="0" max="0.999999999" step="0.001" value="0.99"></label>
           <label class="field">R² 未达标时
             <select id="qc-policy"><option value="block">暂停报告浓度</option><option value="warn">显示结果并提醒</option></select>
           </label>
         </div>
+        <p id="assay-mode-note" class="fine" hidden></p>
         <p class="fine">R² 0.99 是可修改的实验室规则，并非所有试剂盒统一要求；逐点插值没有整体回归 R²。等体积补液的换算不包括 BCA 工作液。</p>
       </details>
     </section>

@@ -152,6 +152,18 @@
     return { raw: raw, values: mg, count: mg.length, reps: positiveCount(settings.stdReps, '标准品复孔数'),
       layout: settings.stdLayout, unit: settings.unit, total: total };
   }
+  function validateAssayMode(settings) {
+    var mode = settings.assayMode || 'matched';
+    if (['matched', 'x-bca-10'].indexOf(mode) < 0) fail('备份文件中的设置格式不正确。');
+    if (mode !== 'x-bca-10') return;
+    var xs = rawConcentrations(settings.concText), expected = [0, 2.5, 5, 7.5, 10];
+    if (settings.unit !== 'mg' || settings.blankMode !== 'none' || xs.length !== expected.length ||
+        xs.some(function (x, i) { return Math.abs(x - expected[i]) > 1e-9; }) ||
+        number(settings.standardTotal) !== 10 || number(settings.sampleVolume) !== 10 ||
+        number(settings.sampleTotal) !== 10 || number(settings.reagent) !== 200) {
+      fail('X-BCA500 仅支持说明书的 10 µL 样品方案：使用 mg/mL、0/2.5/5/7.5/10 梯度、10 µL 参考和样品体积、200 µL 工作液及不扣空白。');
+    }
+  }
   function standardIndex(value, cfg) {
     var x = number(value);
     if (!Number.isFinite(x)) return -1;
@@ -384,6 +396,7 @@
   }
   function calculate(settings, standardText, sampleText) {
     var cfg = standardConfig(settings);
+    validateAssayMode(settings);
     var sampleVolume = positiveVolume(settings.sampleVolume, '实际样品体积');
     var sampleTotal = positiveVolume(settings.sampleTotal, '样品补液后总体积');
     positiveVolume(settings.reagent, '每孔 BCA 工作液体积');
@@ -432,6 +445,7 @@
         status: status, prefix: '', measured: measured, original: original };
     });
     var warnings = ['厂商预设及本次标准点覆盖范围不等于本实验已验证的定量范围；请核对实际操作条件。'];
+    if (settings.assayMode === 'x-bca-10') warnings.push(PRESETS.find(function (p) { return p.id === 'aike-x-bca500'; }).note);
     if (!fit.r2Evaluable) warnings.unshift('逐点插值没有整体 R²，或回归自由度不足；不可用 R² 判定曲线质量。');
     else if (!passesR2 && settings.qcPolicy === 'warn') warnings.unshift('R² 未达到设置门槛；当前选择为显示结果并提醒。');
     if (fit.disorder) warnings.push('部分相邻标准点的复孔均值没有随浓度上升，请检查标准品数据。');
@@ -457,7 +471,7 @@
       stdReps: $('std-reps').value, stdLayout: $('std-layout').value,
       standardTotal: $('std-total').value, sampleVolume: $('sample-volume').value,
       sampleTotal: $('sample-total').value, reagent: $('reagent').value,
-      method: $('method').value, blankMode: $('blank-mode').value,
+      method: $('method').value, blankMode: $('blank-mode').value, assayMode: $('assay-mode').value,
       r2Threshold: $('r2-threshold').value, qcPolicy: $('qc-policy').value,
       layout: $('layout').value, sampleReps: $('sample-reps').value, dilution: $('dilution').value
     };
@@ -552,7 +566,7 @@
     }
     $('warnings').innerHTML = result.warnings.map(function (w) { return '<div class="warning">' + escapeHtml(L(w)) + '</div>'; }).join('');
     $('method-label').textContent = L(result.fit.name);
-    $('blank-value').textContent = result.blank === null ? L('输入已扣空白') : fmt(result.blank, 4);
+    $('blank-value').textContent = result.blank === null ? L(result.settings.blankMode === 'none' ? '未扣空白（原始读数）' : '输入已扣空白') : fmt(result.blank, 4);
     $('actual-range').textContent = fmt(result.minX, result.minX < 0.01 ? 5 : 3) + '–' + fmt(result.maxX, result.maxX < 0.01 ? 5 : 3) + ' mg/mL';
     $('r2').textContent = result.fit.r2Evaluable ? formatR2(result.fit.r2, result.threshold) : L('不适用');
     $('equation').textContent = L(result.fit.equation);
@@ -646,23 +660,32 @@
     else { link.removeAttribute('href'); link.hidden = true; }
     $('delete-profile').hidden = $('preset').value.indexOf('local:') !== 0;
   }
+  function updateAssayLabel() {
+    var special = $('assay-mode').value === 'x-bca-10';
+    $('std-total-label').textContent = L(special ?
+      'X-BCA 样品参考体积（µL，非标准加液体积）' : '标准品加工作液前总体积（µL）');
+    $('assay-mode-note').hidden = !special;
+    $('assay-mode-note').textContent = special ? L(PRESETS.find(function (p) { return p.id === 'aike-x-bca500'; }).note) : '';
+  }
   function applySettings(settings) {
     var fields = {
       'conc-list': 'concText', unit: 'unit', 'std-reps': 'stdReps', 'std-layout': 'stdLayout',
       'std-total': 'standardTotal', 'sample-volume': 'sampleVolume', 'sample-total': 'sampleTotal',
       reagent: 'reagent', method: 'method', 'blank-mode': 'blankMode', 'r2-threshold': 'r2Threshold',
-      'qc-policy': 'qcPolicy', layout: 'layout', 'sample-reps': 'sampleReps', dilution: 'dilution'
+      'qc-policy': 'qcPolicy', layout: 'layout', 'sample-reps': 'sampleReps', dilution: 'dilution', 'assay-mode': 'assayMode'
     };
     Object.keys(fields).forEach(function (id) {
       if (settings[fields[id]] !== undefined) $(id).value = String(settings[fields[id]]);
     });
+    $('assay-mode').value = settings.assayMode || 'matched';
+    updateAssayLabel();
     state.lastUnit = $('unit').value;
   }
   function presetSettings(preset) {
     return {
       presetId: preset.id, concText: preset.concentrations.join(', '), unit: preset.unit,
-      stdReps: '2', stdLayout: 'columns', standardTotal: preset.standardTotal, sampleVolume: preset.sampleAliquot,
-      sampleTotal: preset.sampleTotal, reagent: preset.reagent, method: preset.method, blankMode: 'raw',
+      stdReps: String(preset.stdReps || 2), stdLayout: 'columns', standardTotal: preset.standardTotal, sampleVolume: preset.sampleAliquot,
+      sampleTotal: preset.sampleTotal, reagent: preset.reagent, method: preset.method, blankMode: preset.blankMode || 'raw', assayMode: preset.assayMode || 'matched',
       r2Threshold: '0.99', qcPolicy: 'block', layout: 'columns', sampleReps: '2', dilution: '1'
     };
   }
@@ -696,6 +719,7 @@
       '标准浓度(mg/mL)','标准品复孔吸光度','拟合方法','曲线表达式(x为mg/mL)','R²',
       'R²质控门槛','R²判定','未达标策略','标准总体积(µL)','样品实际体积(µL)','样品补液后体积(µL)','工作液体积(µL)',
       '试剂盒或本机方案','来源说明书','实验提示','演示数据'];
+    if (r.settings.assayMode === 'x-bca-10') headers[20] = 'X-BCA 样品参考体积（µL，非标准加液体积）';
     var rows = [headers.map(function (x) { return csvCell(L(x), false); }).join(',')];
     var stdValues = r.points.map(function (p) { return p.values.join('/'); }).join(';');
     var stdConcs = r.points.map(function (p) { return p.x; }).join(';');
@@ -703,7 +727,7 @@
       var cells = [displayName(s), s.values.join(';'), fmt(s.mean, 6), fmt(s.corrected, 6), s.cv === null ? '' : fmt(s.cv, 2), s.dilution, r.wellFactor,
         concentration(s, s.measured, 6), concentration(s, s.original, 6),
         concentration(s, s.original === null ? null : s.original * 1000, 4), L(s.status),
-        r.blank === null ? L('输入已扣空白') : fmt(r.blank, 6), stdConcs, stdValues,
+        r.blank === null ? L(r.settings.blankMode === 'none' ? '未扣空白（原始读数）' : '输入已扣空白') : fmt(r.blank, 6), stdConcs, stdValues,
         L(r.fit.name), L(r.fit.equation), r.fit.r2Evaluable ? r.fit.r2.toPrecision(15) : '',
         r.threshold, L(r.fit.r2Evaluable ? (r.passesR2 ? '通过' : '未通过') : '不适用'), r.settings.qcPolicy,
         r.settings.standardTotal, r.settings.sampleVolume, r.settings.sampleTotal, r.settings.reagent,
@@ -737,9 +761,9 @@
   function validateSavedSettings(s) {
     if (!s || typeof s.concText !== 'string' || ['mg','ug','ug-well'].indexOf(s.unit) < 0 ||
         ['columns','rows'].indexOf(s.stdLayout) < 0 || ['columns','rows'].indexOf(s.layout) < 0 ||
-        ['linear','quadratic','piecewise'].indexOf(s.method) < 0 || ['raw','corrected'].indexOf(s.blankMode) < 0 ||
+        ['linear','quadratic','piecewise'].indexOf(s.method) < 0 || ['raw','corrected','none'].indexOf(s.blankMode) < 0 ||
         ['block','warn'].indexOf(s.qcPolicy) < 0) fail('备份文件中的设置格式不正确。');
-    standardConfig(s); positiveCount(s.sampleReps, '样品复孔数');
+    standardConfig(s); validateAssayMode(s); positiveCount(s.sampleReps, '样品复孔数');
     positiveVolume(s.sampleVolume, '样品体积'); positiveVolume(s.sampleTotal, '样品补液后体积');
     positiveVolume(s.reagent, '工作液体积'); validDilution(s.dilution, '统一设置');
     var threshold = number(s.r2Threshold);
@@ -808,17 +832,20 @@
   ['conc-list','std-reps','std-total','sample-volume','sample-total','reagent','r2-threshold','sample-reps','dilution'].forEach(function (id) {
     $(id).addEventListener('input', markEdited);
   });
-  ['method','blank-mode','qc-policy','layout','std-layout'].forEach(function (id) {
+  ['method','blank-mode','qc-policy','layout','std-layout','assay-mode'].forEach(function (id) {
     $(id).addEventListener('change', markEdited);
   });
+  $('assay-mode').addEventListener('change', updateAssayLabel);
   $('save-profile').addEventListener('click', function () {
     try {
       var name = $('profile-name').value.trim();
       if (!name) fail('请先输入常用方案名称。');
       var settings = currentSettings(); validateSavedSettings(settings);
       var profiles = readProfiles(), previous = selectedPreset();
+      if (profiles.length >= 50) fail('本机方案已达 50 个，请先删除不需要的方案。');
       var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-      var baseId = previous && previous.id.indexOf('local:') !== 0 ? previous.id : 'custom';
+      var localPrevious = previous && previous.id.indexOf('local:') === 0 ? readProfiles().find(function (p) { return 'local:' + p.id === previous.id; }) : null;
+      var baseId = localPrevious ? localPrevious.baseId : (previous ? previous.id : 'custom');
       profiles.push({ id: id, name: name, baseId: baseId, settings: settings });
       writeProfiles(profiles); refreshPresetOptions('local:' + id);
       state.presetEdited = false; updatePresetDescription(); invalidate();
@@ -832,6 +859,36 @@
       refreshPresetOptions('custom'); applyPreset();
       showNotice('已删除本浏览器中的该方案。');
     } catch (ex) { showError(ex.message || '无法删除方案。'); }
+  });
+  $('export-profile').addEventListener('click', function () {
+    try {
+      var settings = currentSettings(); validateSavedSettings(settings);
+      var previous = selectedPreset();
+      var local = previous && previous.id.indexOf('local:') === 0 ? readProfiles().find(function (p) { return 'local:' + p.id === previous.id; }) : null;
+      var baseId = local ? local.baseId : (previous ? previous.id : 'custom');
+      var name = $('profile-name').value.trim() || (local ? local.name : L('未命名方案'));
+      settings.presetId = baseId;
+      download('BCA-protocol.json', JSON.stringify({format:'bca-protocol-1', name:name, baseId:baseId, settings:settings}, null, 2), 'application/json;charset=utf-8');
+      showNotice('方案已导出，不包含吸光度或样品名称。');
+    } catch (ex) { showError(ex.message || '无法保存方案。'); }
+  });
+  $('profile-file').addEventListener('change', async function (event) {
+    try {
+      var file = event.target.files[0]; if (!file) return;
+      if (file.size > 1024 * 1024) fail('方案文件过大。');
+      var data = JSON.parse(await readText(file));
+      if (!data || data.format !== 'bca-protocol-1' || typeof data.name !== 'string' || !data.name.trim() || data.name.length > 80 || !data.settings) fail('无法识别方案文件，请选择本平台导出的方案文件。');
+      validateSavedSettings(data.settings);
+      var profiles = readProfiles(); if (profiles.length >= 50) fail('本机方案已达 50 个，请先删除不需要的方案。');
+      var base = PRESETS.find(function (p) { return p.id === data.baseId; });
+      var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      var settings = Object.assign({}, data.settings, {presetId: base ? base.id : 'custom'});
+      profiles.push({id:id, name:data.name.trim(), baseId:base ? base.id : 'custom', settings:settings});
+      writeProfiles(profiles); refreshPresetOptions('local:' + id); applyPreset();
+      $('profile-name').value = data.name.trim();
+      showNotice('方案已导入并保存到本浏览器，不包含吸光度或样品名称。');
+    } catch (ex) { showError(ex.message || '无法识别方案文件，请选择本平台导出的方案文件。'); }
+    event.target.value = '';
   });
   bindImport('standard-file', 'standards'); bindImport('sample-file', 'samples');
   $('project-file').addEventListener('change', async function (event) {
@@ -854,6 +911,7 @@
     var selected = $('preset').value;
     refreshPresetOptions(selected);
     updatePresetDescription();
+    updateAssayLabel();
     refreshConcentrationPreview();
     updatePairPreview();
     if (!$('error').hidden && state.errorRaw) showError(state.errorRaw);

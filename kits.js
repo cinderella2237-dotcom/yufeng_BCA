@@ -65,6 +65,63 @@ window.BCA_KIT_PRESETS = [
     note: '按说明书标准液系列及微孔板 2–40 µg/mL 工作范围整理的示例点；说明书建议使用多项式或逐点拟合，请确认本次实际梯度。'
   },
   {
+    id: 'servicebio-g2026', name: '赛维尔 Servicebio G2026-200T：微孔板',
+    concentrations: [0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://www.servicebio.com/goodsdetail?id=1825',
+    note: 'G2026 微孔板示例：标准品补足至 20 µL，配制点为 0–0.5 mg/mL；该系列不是产品标示的全部工作范围。请核对批次说明书及实际加样。'
+  },
+  {
+    id: 'yeasen-20200', name: '翌圣 Yeasen 20200ES76：即用型微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 25, sampleAliquot: 25, sampleTotal: 25, reagent: 200, method: 'linear',
+    source: 'https://www.yeasen.com/products/detail/10090',
+    note: '20200ES76 即用型八点标准；微孔板示例为 25 µL 标准品或样品加 200 µL 工作液，请核对所购批次说明书。'
+  },
+  {
+    id: 'epizyme-zj102', name: '雅酶 Epizyme ZJ102：即用型微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://www.epizyme.cn/uploads/2020/12/091001415357.pdf',
+    note: 'ZJ102 即用型八点示例：标准品及样品各 20 µL，每孔工作液 200 µL；请核对所购批次说明书。'
+  },
+  {
+    id: 'aike-x-bca500', name: '艾克生命 X-BCA500：10 µL 样品方案',
+    concentrations: [0, 2.5, 5, 7.5, 10], unit: 'mg',
+    standardTotal: 10, sampleAliquot: 10, sampleTotal: 10, reagent: 200, method: 'linear',
+    assayMode: 'x-bca-10', blankMode: 'none', stdReps: 3,
+    source: 'https://www.fansbio.com/product/x-bca500',
+    note: 'X-BCA500 特殊方案：标准品 X 分别加 0、5、10、15、20 µL，不补液；样品加 10 µL，工作液 200 µL。0、2.5、5、7.5、10 mg/mL 是对应 10 µL 样品的等效浓度，并非标准液浓度。按所引说明使用原始读数、不扣空白；5 或 20 µL 样品等其他方案暂不支持。'
+  },
+  {
+    id: 'glpbio-gk10009', name: 'GLPBIO GK10009：即用型微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 25, sampleAliquot: 25, sampleTotal: 25, reagent: 200, method: 'linear',
+    source: 'https://www.glpbio.com/jp/bca-protein-assay-kit.html',
+    note: 'GK10009 即用型八点标准；微孔板示例为 25 µL 标准品或样品加 200 µL 工作液。产品资料中的检测范围描述存在不一致，请核对批次说明书并验证实际范围。'
+  },
+  {
+    id: 'proteintech-pk10026', name: '武汉三鹰 Proteintech PK10026：微孔板',
+    concentrations: [0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://www.ptgcn.com/products/BCA-Protein-Assay-Kit-PK10026.htm',
+    note: 'PK10026 微孔板九点示例，20 µL 标准品或样品加 200 µL 工作液。官方不同版本的部分稀释表有差异，请确认实际配制浓度，不应只按预设推定。'
+  },
+  {
+    id: 'takara-t9300a-standard', name: 'Takara T9300A：标准微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 25, sampleAliquot: 25, sampleTotal: 25, reagent: 200, method: 'linear',
+    source: 'https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf',
+    note: 'T9300A 标准微孔板方案：25 µL 标准品或样品加 200 µL 工作液；工作液 A:B 为 100:1。低浓度微孔板方案请使用单独选项。'
+  },
+  {
+    id: 'takara-t9300a-low', name: 'Takara T9300A：低浓度微孔板',
+    concentrations: [0, 5, 10, 20, 50, 100, 150, 200], unit: 'ug',
+    standardTotal: 100, sampleAliquot: 100, sampleTotal: 100, reagent: 100, method: 'linear',
+    source: 'https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf',
+    note: 'T9300A 低浓度微孔板方案：100 µL 标准品或样品加 100 µL 工作液，标准点单位为 µg/mL；流程与标准方案不同。'
+  },
+  {
     id: 'custom',
     name: '其他试剂盒 / 完全自定义',
     concentrations: [0, 0.125, 0.25, 0.5, 1, 2], unit: 'mg',

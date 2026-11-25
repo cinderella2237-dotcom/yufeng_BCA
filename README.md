@@ -41,12 +41,28 @@ CSV and TSV files can be imported directly. For Excel workbooks, copy the releva
 - Replicate CV is calculated from replicate standard deviation divided by the processed mean absorbance. It is not shown for a single well or a nonpositive mean. No universal pass threshold is imposed.
 - Check sample matrix compatibility, reducing agents, chelators, incubation conditions, wavelength, and the specific manufacturer's instructions. Kit performance claims are not the same as the standard points actually measured in a given experiment.
 
+## Saving and sharing protocols
+
+Enter a name under **Save a reusable protocol** and choose **Save in this browser**. The protocol then appears under the saved-protocol group in the kit selector. Local storage is specific to the browser and site address, may be disabled, and can be erased with browser data. To transfer settings, choose **Export current protocol**, then **Import protocol** on the other device. A protocol file contains settings and the protocol name, but not absorbance readings or sample names. The separate data backup includes experimental readings; keep it private when appropriate. Existing saved profiles remain compatible.
+
+### X-BCA500 special case
+
+The listed X-BCA500 protocol adds 0, 5, 10, 15 and 20 µL of standard X directly, without topping up, and uses a 10 µL sample with 200 µL reagent. Its 0, 2.5, 5, 7.5 and 10 mg/mL axis values are equivalents for a 10 µL sample, not the stock concentration or the concentration in each standard well. The preset uses raw readings without blank subtraction and shows a 10 µL sample reference in place of a single standard volume. It enforces these conditions; the listed 5 or 20 µL sample variants are not implemented. Verify the actual assay and product instructions.
+
 ## Included protocol examples
 
 All examples include a blank. Check the actual kit number, instructions, and standards prepared for the experiment.
 
 | Example | Standard points | Source |
 | --- | --- | --- |
+| Takara T9300A, standard microplate | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [T9300A manual](https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf), standard protocol b: 25 µL + 200 µL |
+| Takara T9300A, low-concentration microplate | 0, 5, 10, 20, 50, 100, 150, 200 µg/mL | [T9300A manual](https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf), protocol e: 100 µL + 100 µL |
+| Servicebio G2026-200T | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [G2026 product instructions](https://www.servicebio.com/goodsdetail?id=1825); standards topped up to 20 µL |
+| GLPBIO GK10009 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [GK10009 product information](https://www.glpbio.com/jp/bca-protein-assay-kit.html), 25 µL + 200 µL; product materials differ on claimed detection range |
+| Proteintech PK10026 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [PK10026 product instructions](https://www.ptgcn.com/products/BCA-Protein-Assay-Kit-PK10026.htm), 20 µL + 200 µL; some official dilution tables disagree, verify prepared concentrations |
+| Yeasen 20200ES76 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [20200ES76 product information](https://www.yeasen.com/products/detail/10090); 25 µL + 200 µL microplate example |
+| Epizyme ZJ102 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [ZJ102 instructions](https://www.epizyme.cn/uploads/2020/12/091001415357.pdf); 20 µL + 200 µL |
+| Aike Life X-BCA500 | 0, 2.5, 5, 7.5, 10 mg/mL (10 µL sample equivalents) | [Product instructions](https://www.fansbio.com/product/x-bca500); differing standard volumes and no blank subtraction, see special case above |
 | Thermo Pierce BCA 23225/23227 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [MAN0011430 Rev. D](https://tools.thermofisher.com/content/sfs/manuals/MAN0011430_Pierce_BCA_Protein_Asy_UG.pdf), standard microplate protocol |
 | Beyotime P0012 | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [P0012 instructions](https://www.beyotime.com/Manual/P0012%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92.pdf) |
 | Beyotime P0010S | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [P0010S instructions](https://m.beyotime.com/Manual/P0010S%20BCA%E8%9B%8B%E7%99%BD%E6%B5%93%E5%BA%A6%E6%B5%8B%E5%AE%9A%E8%AF%95%E5%89%82%E7%9B%92_%E5%A2%9E%E5%BC%BA%E5%9E%8B_.pdf) |
