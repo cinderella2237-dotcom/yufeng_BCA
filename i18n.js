@@ -4,6 +4,16 @@
 
   // Chinese source strings are kept so old input formats and backups remain valid.
   var english = {
+    "雅酶 Epizyme ZJ101：微孔板": "Epizyme ZJ101: microplate",
+    "翌圣 Yeasen 20201ES86：增强型微孔板": "Yeasen 20201ES86: enhanced microplate",
+    "ZJ101 微孔板示例：标准品须配制并补足至 20 µL，样品为 20 µL，每孔工作液 200 µL。标准梯度与 ZJ102 即用型不同，请按实际配制浓度填写。": "ZJ101 microplate example: prepare and top standards up to 20 µL; use 20 µL sample and 200 µL reagent per well. The standard series differs from ready-to-use ZJ102; enter the concentrations actually prepared.",
+    "20201ES86 增强型说明书的微孔板示例：25 µL 标准品或样品加 200 µL 工作液；九点梯度须自行配制，与 20200ES76 即用型不同。请核对所购批次说明书和实际浓度。": "20201ES86 enhanced microplate example: 25 µL standard or sample plus 200 µL reagent. Prepare the nine-point series yourself; it differs from ready-to-use 20200ES76. Verify your batch instructions and actual concentrations.",
+    "美仑生物 MeilunBio MA1610：即用型快速微孔板": "MeilunBio MA1610: ready-to-use rapid microplate",
+    "美仑生物 MeilunBio MA1611：即用型快速微孔板": "MeilunBio MA1611: ready-to-use rapid microplate",
+    "MA1610 即用型快速方案：20 µL 标准品或样品加 200 µL 工作液，说明书使用 480 nm、室温显色 5 分钟；须核对读数时间及所购批次说明书。": "MA1610 ready-to-use rapid protocol: 20 µL of standard or sample plus 200 µL reagent. The instructions use 480 nm and a 5-minute room-temperature reaction; check reading times and batch instructions.",
+    "MA1611 即用型快速方案：10 µL 标准品或样品加 200 µL 工作液，说明书使用 480 nm、室温显色 5 分钟；须核对读数时间及所购批次说明书。": "MA1611 ready-to-use rapid protocol: 10 µL of standard or sample plus 200 µL reagent. The instructions use 480 nm and a 5-minute room-temperature reaction; check reading times and batch instructions.",
+    "美仑生物 MeilunBio MA0082：微孔板": "MeilunBio MA0082: microplate",
+    "MA0082 微孔板九点示例：20 µL 标准品或样品加 200 µL 工作液；说明书标示较好线性范围 0.05–1 mg/mL，标准点最高为 2 mg/mL。不同规格 BSA 复溶浓度不同，请核对批次说明书与实际配制浓度。": "MA0082 nine-point microplate example: 20 µL of standard or sample plus 200 µL of reagent. The manual states good linearity at 0.05–1 mg/mL while its highest standard is 2 mg/mL. Reconstituted BSA concentrations differ by kit size; check your batch instructions and actual standards.",
     "Takara T9300A：标准微孔板": "Takara T9300A: standard microplate",
     "Takara T9300A：低浓度微孔板": "Takara T9300A: low-concentration microplate",
     "T9300A 标准微孔板方案：25 µL 标准品或样品加 200 µL 工作液；工作液 A:B 为 100:1。低浓度微孔板方案请使用单独选项。": "T9300A standard microplate protocol: 25 µL standard or sample plus 200 µL working reagent; mix A:B at 100:1. The low-concentration microplate protocol has a separate preset.",

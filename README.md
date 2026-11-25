@@ -57,10 +57,15 @@ All examples include a blank. Check the actual kit number, instructions, and sta
 | --- | --- | --- |
 | Takara T9300A, standard microplate | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [T9300A manual](https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf), standard protocol b: 25 µL + 200 µL |
 | Takara T9300A, low-concentration microplate | 0, 5, 10, 20, 50, 100, 150, 200 µg/mL | [T9300A manual](https://www.takarabiomed.com.cn/DownLoad/T9300A.pdf), protocol e: 100 µL + 100 µL |
+| MeilunBio MA1610 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [MA1610 manual](https://meilunhelper.com/uploads/guide/MA1610.pdf); 20 µL + 200 µL, 480 nm, 5 min |
+| MeilunBio MA1611 | 0, 0.125, 0.25, 0.5, 1, 2, 5, 10 mg/mL | [MA1611 manual](https://meilunhelper.com/uploads/guide/MA1611.pdf); 10 µL + 200 µL, 480 nm, 5 min |
+| MeilunBio MA0082 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [MA0082 manual](https://meilunhelper.com/uploads/guide/MA0082.pdf); 20 µL + 200 µL. Reconstituted stock concentrations vary by kit size; the stated good linear range is 0.05–1 mg/mL. |
 | Servicebio G2026-200T | 0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5 mg/mL | [G2026 product instructions](https://www.servicebio.com/goodsdetail?id=1825); standards topped up to 20 µL |
 | GLPBIO GK10009 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [GK10009 product information](https://www.glpbio.com/jp/bca-protein-assay-kit.html), 25 µL + 200 µL; product materials differ on claimed detection range |
 | Proteintech PK10026 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [PK10026 product instructions](https://www.ptgcn.com/products/BCA-Protein-Assay-Kit-PK10026.htm), 20 µL + 200 µL; some official dilution tables disagree, verify prepared concentrations |
 | Yeasen 20200ES76 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [20200ES76 product information](https://www.yeasen.com/products/detail/10090); 25 µL + 200 µL microplate example |
+| Epizyme ZJ101 | 0, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.5, 2 mg/mL | [ZJ101 manual](https://www.epizyme.cn/uploads/2022/01/100933587792.pdf); microplate standards topped up to 20 µL, samples 20 µL, reagent 200 µL |
+| Yeasen 20201ES86, enhanced | 0, 0.04, 0.2, 0.4, 0.6, 1, 1.2, 1.4, 2 mg/mL | Microplate example in [manufacturer's 20201ES manual](https://upload.yeasen.com/website/file/20200225110828467.pdf) ([reproduced instructions](https://www.biomart.cn/infosupply/104233694.htm)); 25 µL + 200 µL. Prepare and verify actual standards. |
 | Epizyme ZJ102 | 0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [ZJ102 instructions](https://www.epizyme.cn/uploads/2020/12/091001415357.pdf); 20 µL + 200 µL |
 | Aike Life X-BCA500 | 0, 2.5, 5, 7.5, 10 mg/mL (10 µL sample equivalents) | [Product instructions](https://www.fansbio.com/product/x-bca500); differing standard volumes and no blank subtraction, see special case above |
 | Thermo Pierce BCA 23225/23227 | 0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2 mg/mL | [MAN0011430 Rev. D](https://tools.thermofisher.com/content/sfs/manuals/MAN0011430_Pierce_BCA_Protein_Asy_UG.pdf), standard microplate protocol |

@@ -122,6 +122,41 @@ window.BCA_KIT_PRESETS = [
     note: 'T9300A 低浓度微孔板方案：100 µL 标准品或样品加 100 µL 工作液，标准点单位为 µg/mL；流程与标准方案不同。'
   },
   {
+    id: 'meilun-ma0082', name: '美仑生物 MeilunBio MA0082：微孔板',
+    concentrations: [0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://meilunhelper.com/uploads/guide/MA0082.pdf',
+    note: 'MA0082 微孔板九点示例：20 µL 标准品或样品加 200 µL 工作液；说明书标示较好线性范围 0.05–1 mg/mL，标准点最高为 2 mg/mL。不同规格 BSA 复溶浓度不同，请核对批次说明书与实际配制浓度。'
+  },
+  {
+    id: 'meilun-ma1610', name: '美仑生物 MeilunBio MA1610：即用型快速微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://meilunhelper.com/uploads/guide/MA1610.pdf',
+    note: 'MA1610 即用型快速方案：20 µL 标准品或样品加 200 µL 工作液，说明书使用 480 nm、室温显色 5 分钟；须核对读数时间及所购批次说明书。'
+  },
+  {
+    id: 'meilun-ma1611', name: '美仑生物 MeilunBio MA1611：即用型快速微孔板',
+    concentrations: [0, 0.125, 0.25, 0.5, 1, 2, 5, 10], unit: 'mg',
+    standardTotal: 10, sampleAliquot: 10, sampleTotal: 10, reagent: 200, method: 'linear',
+    source: 'https://meilunhelper.com/uploads/guide/MA1611.pdf',
+    note: 'MA1611 即用型快速方案：10 µL 标准品或样品加 200 µL 工作液，说明书使用 480 nm、室温显色 5 分钟；须核对读数时间及所购批次说明书。'
+  },
+  {
+    id: 'epizyme-zj101', name: '雅酶 Epizyme ZJ101：微孔板',
+    concentrations: [0, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.5, 2], unit: 'mg',
+    standardTotal: 20, sampleAliquot: 20, sampleTotal: 20, reagent: 200, method: 'linear',
+    source: 'https://www.epizyme.cn/uploads/2022/01/100933587792.pdf',
+    note: 'ZJ101 微孔板示例：标准品须配制并补足至 20 µL，样品为 20 µL，每孔工作液 200 µL。标准梯度与 ZJ102 即用型不同，请按实际配制浓度填写。'
+  },
+  {
+    id: 'yeasen-20201es86', name: '翌圣 Yeasen 20201ES86：增强型微孔板',
+    concentrations: [0, 0.04, 0.2, 0.4, 0.6, 1, 1.2, 1.4, 2], unit: 'mg',
+    standardTotal: 25, sampleAliquot: 25, sampleTotal: 25, reagent: 200, method: 'linear',
+    source: 'https://www.biomart.cn/infosupply/104233694.htm',
+    note: '20201ES86 增强型说明书的微孔板示例：25 µL 标准品或样品加 200 µL 工作液；九点梯度须自行配制，与 20200ES76 即用型不同。请核对所购批次说明书和实际浓度。'
+  },
+  {
     id: 'custom',
     name: '其他试剂盒 / 完全自定义',
     concentrations: [0, 0.125, 0.25, 0.5, 1, 2], unit: 'mg',

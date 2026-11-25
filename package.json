@@ -1,6 +1,6 @@
 {
   "name": "bca-protein-calculator",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "private": true,
   "description": "Browser-local BCA protein assay calculator",
   "license": "AGPL-3.0-only",

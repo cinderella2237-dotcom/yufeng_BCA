@@ -16,6 +16,11 @@ const assert = require('node:assert/strict');
     const presets = {
       'takara-t9300a-standard': ['0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2','25'],
       'takara-t9300a-low': ['0, 5, 10, 20, 50, 100, 150, 200','100'],
+      'meilun-ma1610': ['0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2','20'],
+      'meilun-ma1611': ['0, 0.125, 0.25, 0.5, 1, 2, 5, 10','10'],
+      'meilun-ma0082': ['0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2','20'],
+      'epizyme-zj101': ['0, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 1.5, 2','20'],
+      'yeasen-20201es86': ['0, 0.04, 0.2, 0.4, 0.6, 1, 1.2, 1.4, 2','25'],
       'servicebio-g2026': ['0, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5','20'],
       'glpbio-gk10009': ['0, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2','25'],
       'proteintech-pk10026': ['0, 0.025, 0.125, 0.25, 0.5, 0.75, 1, 1.5, 2','20'],
@@ -29,6 +34,41 @@ const assert = require('node:assert/strict');
       assert.equal(await page.locator('#std-total').inputValue(),vol);
       assert.doesNotMatch(await page.locator('#preset-note').innerText(),/[\u4e00-\u9fff]/);
     }
+    for (const [id,volume] of [['epizyme-zj101','20'],['yeasen-20201es86','25']]) {
+      await page.selectOption('#preset',id);
+      assert.equal(await page.locator('#sample-volume').inputValue(),volume);
+      assert.equal(await page.locator('#sample-total').inputValue(),volume);
+      assert.equal(await page.locator('#reagent').inputValue(),'200');
+      assert.equal(await page.locator('#blank-mode').inputValue(),'raw');
+      const values = (await page.locator('#conc-list').inputValue()).split(',').map(Number);
+      const row = values.map(x => (0.1 + 0.4*x).toFixed(6)).join('\t');
+      await page.fill('#standards', row + '\n' + row);
+      await page.fill('#samples', '0.5\n0.5');
+      await page.click('#calculate');
+      assert.equal(await page.locator('#sample-results tr td').nth(8).innerText(),'1.0000');
+      assert.equal(await page.locator('#blank-value').innerText(),'0.1000');
+      await page.selectOption('#language-switch','zh');
+      assert.match(await page.locator('#preset-note').innerText(),/微孔板/);
+      await page.selectOption('#language-switch','en');
+      assert.doesNotMatch(await page.locator('#preset-note').innerText(),/[\u4e00-\u9fff]/);
+    }
+    for (const [id,volume] of [['meilun-ma1610','20'],['meilun-ma1611','10']]) {
+      await page.selectOption('#preset',id);
+      assert.equal(await page.locator('#sample-volume').inputValue(),volume);
+      assert.equal(await page.locator('#reagent').inputValue(),'200');
+      assert.equal(await page.locator('#blank-mode').inputValue(),'raw');
+      assert.match(await page.locator('#preset-note').innerText(),/480 nm/);
+    }
+    await page.selectOption('#preset','meilun-ma0082');
+    assert.equal(await page.locator('#unit').inputValue(),'mg');
+    assert.equal(await page.locator('#sample-volume').inputValue(),'20');
+    assert.equal(await page.locator('#sample-total').inputValue(),'20');
+    assert.equal(await page.locator('#reagent').inputValue(),'200');
+    assert.equal(await page.locator('#blank-mode').inputValue(),'raw');
+    assert.match(await page.locator('#preset-source').getAttribute('href'),/MA0082\.pdf/);
+    await page.selectOption('#language-switch','zh');
+    assert.match(await page.locator('#preset-note').innerText(),/复溶浓度不同/);
+    await page.selectOption('#language-switch','en');
     await page.selectOption('#preset','aike-x-bca500');
     assert.equal(await page.locator('#assay-mode').inputValue(),'x-bca-10');
     assert.equal(await page.locator('#blank-mode').inputValue(),'none');
